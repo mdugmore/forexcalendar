@@ -8,7 +8,7 @@ var cheerio = require('cheerio');
 var dateFormat = require('dateformat');
 var fs = require('fs');
 
-var monthNames = ["jan", "fev", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+var monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 var dateRef  = process.argv[2];
 var dateEnd  = process.argv[3];
 var viewJson = process.argv[4];
@@ -135,7 +135,11 @@ function getEvents(time, datasent, callback) {
                     calendar_time = convertTo24Hour(data.find('.calendar__time').text());
                     time = convertTo24Hour(data.find('.calendar__time').text());
                 }
-
+				var input = data.find('.calendar__impact').attr('class');
+				if (input != undefined) {
+				var impactFields = input.split('--');
+				var impact = impactFields[1];
+				}
                 var currency = data.find('.calendar__currency').text();
                 var title = trim_space(data.find('.calendar__event').text());
                 var actual = data.find('.calendar__actual').text();
@@ -145,7 +149,7 @@ function getEvents(time, datasent, callback) {
 
 		if (process.argv[4] === undefined) {
 		    if (currency.length > 2) {
-                    	insert = "INSERT INTO calendar (\"date\",\"time\",\"symbol\",\"title\",\"actual\",\"forecast\",\"previous\") VALUES (\"" + calendar_date + "\", \"" + calendar_time + "\", \"" + currency + "\", \"" + title + "\", \"" + actual + "\", \"" + forecast + "\", \"" + previous + "\" )\n";
+                    	insert = "INSERT INTO calendar (\"date\",\"time\",\"symbol\",\"title\",\"actual\",\"forecast\",\"previous\", \"impact\") VALUES (\"" + calendar_date + "\", \"" + calendar_time + "\", \"" + currency + "\", \"" + title + "\", \"" + actual + "\", \"" + forecast + "\", \"" + previous + "\", \"" + impact + "\" )\n";
                    	saveLog(insert);
 		   }	
 		}else{
